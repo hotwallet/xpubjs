@@ -1,0 +1,12 @@
+{
+  "name": "xpubjs",
+  "version": "1.0.0",
+  "description": "Construct extended public key",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "author": "will123195",
+  "license": "MIT",
+  "dependencies": {}
+}
