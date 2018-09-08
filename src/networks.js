@@ -1,354 +1,163 @@
-
-const networks = {
-  0: {
-    apiName: "btc",
-    unit: "BTC",
-    name: "bitcoin",
+module.exports = [
+  {
+    symbol: 'BTC',
+    bip44: 0,
+    xprv: 76066276,
+    xpub: 76067358,
     satoshi: 8,
-    bitcoinjs: {
-      bech32: "bc",
-      bip32: {
-        private: 76066276,
-        public: 76067358
-      },
-      messagePrefix: "Bitcoin Signed Message:",
-      pubKeyHash: 0,
-      scriptHash: 5,
-      wif: 128
-    },
-    isSegwitSupported: true,
-    handleFeePerByte: true
+    bech32: 'bc',
+    isSegwitSupported: true
   },
-  1: {
-    apiName: "btc_testnet",
-    unit: "BTC",
-    name: "btc testnet",
+  {
+    symbol: 'LTC',
+    bip44: 2,
+    xprv: 0x019d9cfe,
+    xpub: 0x019da462,
     satoshi: 8,
-    bitcoinjs: {
-      bech32: "bc",
-      bip32: {
-        private: 70615956,
-        public: 70617039
-      },
-      messagePrefix: "Bitcoin Signed Message:",
-      pubKeyHash: 111,
-      scriptHash: 196,
-      wif: 239
-    },
-    isSegwitSupported: true,
-    handleFeePerByte: true
+    bech32: 'bc',
+    isSegwitSupported: true
   },
-  2: {
-    name: "litecoin",
-    unit: "LTC",
-    apiName: "ltc",
-    isSegwitSupported: true,
+  {
+    symbol: 'BCH',
+    bip44: 145,
     satoshi: 8,
-    bitcoinjs: {
-      bech32: "bc",
-      bip32: {
-        private: 0x019d9cfe,
-        public: 0x019da462
-      },
-      messagePrefix: "Litecoin Signed Message:",
-      pubKeyHash: 48,
-      scriptHash: 5,
-      wif: 0xb0
-    },
-    handleFeePerByte: false
+    xprv: 76066276,
+    xpub: 76067358,
+    bech32: 'bc',
+    isSegwitSupported: true
   },
-  145: {
-    name: "bitcoin cash",
-    apiName: "abc",
+  {
+    symbol: 'VTC',
+    bip44: 128,
     satoshi: 8,
-    unit: "BCH",
-    bitcoinjs: {
-      bech32: "bc",
-      bip32: {
-        private: 76066276,
-        public: 76067358
-      },
-      messagePrefix: "Bitcoin Signed Message:",
-      pubKeyHash: 0,
-      scriptHash: 5,
-      wif: 128
-    },
-    sigHash: 0x41,
-    isSegwitSupported: true,
-    handleFeePerByte: true,
-    additionals: ["abc"]
+    xprv: 0x05358394,
+    xpub: 0x0488b21e,
+    isSegwitSupported: true
   },
-  128: {
-    apiName: "vtc",
-    unit: "VTC",
+  {
+    symbol: 'DASH',
+    bip44: 5,
     satoshi: 8,
-    name: "Vertcoin",
-    bitcoinjs: {
-      bip32: {
-        public: 0x0488b21e,
-        private: 0x05358394
-      },
-      messagePrefix: "Vertcoin Signed Message:",
-      pubKeyHash: 71,
-      scriptHash: 5,
-      wif: 128
-    },
-    isSegwitSupported: true,
-    handleFeePerByte: false
+    xpub: 50221816,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  5: {
-    name: "dash",
-    satoshi: 8,
-    unit: "DASH",
-    apiName: "dash",
-    bitcoinjs: {
-      messagePrefix: "DarkCoin Signed Message:",
-      bip32: { public: 50221816, private: 87393172 },
-      pubKeyHash: 76,
-      scriptHash: 16,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: undefined
-  },
-  6: {
-    name: "peercoin",
+  {
+    symbol: 'PPC',
+    bip44: 6,
     satoshi: 6,
-    unit: "PPC",
-    apiName: "ppc",
-    bitcoinjs: {
-      messagePrefix: "PPCoin Signed Message:",
-      bip32: { public: 3874023909, private: 87393172 },
-      pubKeyHash: 55,
-      scriptHash: 117,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: true
+    xpub: 3874023909,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  14: {
-    name: "viacoin",
+  {
+    symbol: 'VIA',
+    bip44: 14,
     satoshi: 8,
-    unit: "VIA",
-    apiName: "via",
-    bitcoinjs: {
-      messagePrefix: "Viacoin Signed Message:",
-      bip32: { public: 76067358, private: 87393172 },
-      pubKeyHash: 71,
-      scriptHash: 33,
-      wif: 128
-    },
-    isSegwitSupported: true,
-    handleFeePerByte: false,
-    areTransactionTimestamped: false
+    xpub: 76067358,
+    xprv: 87393172,
+    isSegwitSupported: true
   },
-  20: {
-    name: "digibyte",
+  {
+    symbol: 'DGB',
+    bip44: 20,
     satoshi: 8,
-    unit: "DGB",
-    apiName: "dgb",
-    bitcoinjs: {
-      messagePrefix: "DigiByte Signed Message:",
-      bip32: { public: 76067358, private: 87393172 },
-      pubKeyHash: 30,
-      scriptHash: 5,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: false
+    xpub: 76067358,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  47: {
-    name: "poswallet",
+  {
+    symbol: 'POSW',
+    bip44: 47,
     satoshi: 8,
-    unit: "POSW",
-    apiName: "posw",
-    bitcoinjs: {
-      messagePrefix: "PoSWallet Signed Message:",
-      bip32: { public: 76067358, private: 87393172 },
-      pubKeyHash: 55,
-      scriptHash: 85,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: true
+    xpub: 76067358,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  77: {
-    name: "pivx",
+  {
+    symbol: 'PIVX',
+    bip44: 77,
     satoshi: 8,
-    unit: "PIV",
-    apiName: "pivx",
-    bitcoinjs: {
-      messagePrefix: "DarkNet Signed Message:",
-      bip32: { public: 36513075, private: 87393172 },
-      pubKeyHash: 30,
-      scriptHash: 13,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: false
+    xpub: 36513075,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  79: {
-    name: "clubcoin",
+  {
+    symbol: 'CLUB',
+    bip44: 79,
     satoshi: 8,
-    unit: "CLUB",
-    apiName: "club",
-    bitcoinjs: {
-      messagePrefix: "ClubCoin Signed Message:",
-      bip32: { public: 76067358, private: 87393172 },
-      pubKeyHash: 28,
-      scriptHash: 85,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: true
+    xpub: 76067358,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  88: {
-    name: "qtum",
+  {
+    symbol: 'QTUM',
+    bip44: 88,
     satoshi: 8,
-    unit: "QTUM",
-    apiName: "qtum",
-    bitcoinjs: {
-      messagePrefix: "Qtum Signed Message:",
-      bip32: { public: 76067358, private: 87393172 },
-      pubKeyHash: 58,
-      scriptHash: 50,
-      wif: 128
-    },
-    isSegwitSupported: true,
-    handleFeePerByte: false,
-    areTransactionTimestamped: undefined
+    xpub: 76067358,
+    xprv: 87393172,
+    isSegwitSupported: true
   },
-  105: {
-    name: "stratis",
+  {
+    symbol: 'STRAT',
+    bip44: 105,
     satoshi: 8,
-    unit: "STRAT",
-    apiName: "strat",
-    bitcoinjs: {
-      messagePrefix: "Stratis Signed Message:",
-      bip32: { public: 76071454, private: 87393172 },
-      pubKeyHash: 63,
-      scriptHash: 125,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: true
+    xpub: 76071454,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  125: {
-    name: "stealthcoin",
+  {
+    symbol: 'XST',
+    bip44: 125,
     satoshi: 6,
-    unit: "XST",
-    apiName: "xst",
-    bitcoinjs: {
-      messagePrefix: "StealthCoin Signed Message:",
-      bip32: { public: 2405583718, private: 87393172 },
-      pubKeyHash: 62,
-      scriptHash: 85,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: true
+    xpub: 2405583718,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  133: {
-    name: "zcash",
+  {
+    symbol: 'ZEC',
+    bip44: 133,
     satoshi: 8,
-    unit: "ZEC",
-    apiName: "zec",
-    bitcoinjs: {
-      messagePrefix: "Zcash Signed Message:",
-      bip32: { public: 76067358, private: 87393172 },
-      pubKeyHash: 7352,
-      scriptHash: 7357,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: undefined,
-    expiryHeight: Buffer.from("00000000", 'hex')
+    xpub: 76067358,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  141: {
-    name: "komodo",
+  {
+    symbol: 'KMD',
+    bip44: 141,
     satoshi: 8,
-    unit: "KMD",
-    apiName: "kmd",
-    bitcoinjs: {
-      messagePrefix: "Komodo Signed Message:",
-      bip32: { public: 4193182861, private: 87393172 },
-      pubKeyHash: 60,
-      scriptHash: 85,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: undefined
+    xpub: 4193182861,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  156: {
-    name: "bitcoin gold",
+  {
+    symbol: 'BTG',
+    bip44: 156,
     satoshi: 8,
-    unit: "BTG",
-    apiName: "btg",
-    bitcoinjs: {
-      messagePrefix: "Bitcoin gold Signed Message:",
-      bip32: { public: 76067358, private: 76066276 },
-      pubKeyHash: 38,
-      scriptHash: 23,
-      wif: 128
-    },
-    sigHash: 0x41,
-    isSegwitSupported: true,
-    handleFeePerByte: true,
-    areTransactionTimestamped: undefined,
-    additionals: ["gold"]
+    xpub: 76067358,
+    xprv: 76066276,
+    isSegwitSupported: true
   },
-  171: {
-    name: "hcash",
+  {
+    symbol: 'HSR',
+    bip44: 171,
     satoshi: 8,
-    unit: "HSR",
-    apiName: "hsr",
-    bitcoinjs: {
-      messagePrefix: "HShare Signed Message:",
-      bip32: { public: 76071454, private: 87393172 },
-      pubKeyHash: 40,
-      scriptHash: 100,
-      wif: 128
-    },
-    isSegwitSupported: false,
-    handleFeePerByte: false,
-    areTransactionTimestamped: true
+    xpub: 76071454,
+    xprv: 87393172,
+    isSegwitSupported: false
   },
-  121: {
-    name: "zencash",
+  {
+    symbol: 'ZEN',
+    bip44: 121,
     satoshi: 8,
-    unit: "ZEN",
-    apiName: "zen",
-    bitcoinjs: {
-      messagePrefix: "Zencash Signed Message:",
-      bip32: { public: 76067358, private: 87393172 },
-      pubKeyHash: 0x2089,
-      scriptHash: 0x2096,
-      wif: 128
-    },
+    xpub: 76067358,
+    xprv: 87393172
   },
-  3: {
-    name: "dogecoin",
+  {
+    symbol: 'DOGE',
+    bip44: 3,
     satoshi: 8,
-    unit: "Ð",
-    apiName: "doge",
-    bitcoinjs: {
-      messagePrefix: "Dogecoin Signed Message:",
-      bip32: { public: 0x02facafd, private: 87393172 },
-      pubKeyHash: 30,
-      scriptHash: 22,
-      wif: 128
-    },
+    xpub: 0x02facafd,
+    xprv: 87393172
   }
-};
-
-module.exports = networks
+]
