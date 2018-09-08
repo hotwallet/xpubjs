@@ -1,97 +1,105 @@
-const Amount = require('./Amount')
-const ByteString = require('./ByteString')
-const Convert = require('./Convert')
-const leftPad = require('./leftPad')
-const RIPEMD160 = require('./ripemd160')
-const SHA256 = require('./sha256')
+var Networks = require("./networks")
+var bs58 = require("bs58")
+var shajs = require('sha.js')
+var RIPEMD160 = require('ripemd160')
+var padStart = require("lodash.padstart")
 
-const ripemd160 = new RIPEMD160()
-const sha256 = new SHA256()
-
-function compressPublicKey(publicKeyInput) {
-  const publicKey = new ByteString(publicKeyInput, 'HEX')
-  var prefix = ((publicKey.byteAt(64) & 1) != 0 ? 0x03 : 0x02);
-  return new ByteString(Convert.toHexByte(prefix), 'HEX').concat(publicKey.bytes(1, 32));
+function sha256 (buffer) {
+  return shajs('sha256').update(buffer).digest()
 }
 
-function b58Encode(v) {
-  const __b58chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
-  var div, i, long_value, mod, result, value256, _i, _ref;
-  long_value = Amount.fromSatoshi(0);
-  value256 = Amount.fromSatoshi(256);
-  for (i = _i = _ref = v.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) {
-    long_value = long_value.add(value256.pow(v.length - i - 1).multiply(v.byteAt(i)));
-  }
-  result = '';
-  while (long_value.gte(__b58chars.length)) {
-    div = long_value.divide(__b58chars.length);
-    mod = long_value.mod(__b58chars.length);
-    result = __b58chars[mod.toNumber()] + result;
-    long_value = div;
-  }
-  return __b58chars[long_value.toNumber()] + result;
+function ripemd160(buffer) {
+  return (new RIPEMD160().update(buffer).digest())
 }
 
-/**
- * Convert a byte array to hex string.
- *
- * Exemple [10, 16] will be converted to "0A10".
- *
- * @param {byte[]} arr
- */
-function byteArrayToHexStr(arr) {
-  var len = arr.length;
-  var str = "";
-  for (var i = 0; i<len; i++) {
-    var x = (arr[i]&0x00FF).toString(16);
-    if (x.length&1) {
-      str  = str+"0"+x;
-    } else {
-      str  = str+x;
-    }
+function parseHexString(str) {
+  var result = [];
+  while (str.length >= 2) {
+    result.push(parseInt(str.substring(0, 2), 16));
+    str = str.substring(2, str.length);
   }
-  return str;
+  return result;
+}
+
+function compressPublicKey(publicKey) {
+  var compressedKeyIndex;
+  if (publicKey.substring(0, 2) !== "04") {
+    throw "Invalid public key format";
+  }
+  if (parseInt(publicKey.substring(128, 130), 16) % 2 !== 0) {
+    compressedKeyIndex = "03";
+  } else {
+    compressedKeyIndex = "02";
+  }
+  return compressedKeyIndex + publicKey.substring(2, 66);
+}
+
+function toHexDigit(number) {
+  var digits = "0123456789abcdef";
+  return digits.charAt(number >> 4) + digits.charAt(number & 0x0f);
+}
+
+function toHexInt(number) {
+  return (
+    toHexDigit((number >> 24) & 0xff) +
+    toHexDigit((number >> 16) & 0xff) +
+    toHexDigit((number >> 8) & 0xff) +
+    toHexDigit(number & 0xff)
+  );
 }
 
 function encodeBase58Check(vchIn) {
-  var hash;
-  hash = sha256.finalize(vchIn.toString('HEX'));
-  hash = sha256.finalize(byteArrayToHexStr(hash));
-  hash = new ByteString(byteArrayToHexStr(hash), 'HEX').bytes(0, 4);
-  hash = vchIn.concat(hash);
-  return b58Encode(hash);
+  vchIn = parseHexString(vchIn);
+  var chksum = sha256(vchIn);
+  chksum = sha256(chksum);
+  chksum = chksum.slice(0, 4);
+  var hash = vchIn.concat(Array.from(chksum));
+  return bs58.encode(hash);
 }
 
-function createXpub(depth, fingerprint, childnum, chainCode, publicKey) {
-  // const magic = Convert.toHexInt(ledger.config.network.version.XPUB);
-  const magic = Convert.toHexInt(0x0488B21E)
-  let xpub = new ByteString(magic, 'HEX');
-  xpub = xpub.concat(new ByteString(leftPad(depth.toString(16), 2, '0'), 'HEX'));
-  xpub = xpub.concat(new ByteString(leftPad(fingerprint.toString(16), 8, '0'), 'HEX'));
-  xpub = xpub.concat(new ByteString(leftPad(childnum.toString(16), 8, '0'), 'HEX'));
-  xpub = xpub.concat(new ByteString(chainCode.toString('HEX'), 'HEX'));
-  xpub = xpub.concat(new ByteString(publicKey.toString('HEX'), 'HEX'));
+function createXPUB(
+  depth,
+  fingerprint,
+  childnum,
+  chaincode,
+  publicKey,
+  network
+) {
+  var xpub = toHexInt(network);
+  xpub = xpub + padStart(depth.toString(16), 2, "0");
+  xpub = xpub + padStart(fingerprint.toString(16), 8, "0");
+  xpub = xpub + padStart(childnum.toString(16), 8, "0");
+  xpub = xpub + chaincode;
+  xpub = xpub + publicKey;
   return xpub;
 }
 
-function finalize(fingerprint, pubKey, chainCode, derivationPath) {
-  const publicKey = compressPublicKey(pubKey);
-  const path = derivationPath.split('/')
-  const depth = path.length
-  const lastChild = path[path.length - 1].split('\'');
-  const childnum = (lastChild.length === 1) ? parseInt(lastChild[0]) : (0x80000000 | parseInt(lastChild[0])) >>> 0;
-  const xpub = createXpub(depth, fingerprint, childnum, chainCode, publicKey);
-  return encodeBase58Check(xpub)
-}
-
-
-function deriveXpub({ parentPubKey, pubKey, chainCode, derivationPath }) {
-  const parentPublicKey = compressPublicKey(parentPubKey);
-  let result = sha256.finalize(parentPublicKey.toString('HEX'));
-  result = new ByteString(byteArrayToHexStr(result), 'HEX');
-  result = ripemd160.finalize(result.toString('HEX'));
-  const fingerprint = ((result[0] << 24) | (result[1] << 16) | (result[2] << 8) | result[3]) >>> 0;
-  return finalize(fingerprint, pubKey, chainCode, derivationPath);
+function deriveXpub({ derivationPath, pubKey, chainCode, parentPubKey } = {}) {
+  var network = 0 // btc
+  const finalize = fingerprint => {
+    var publicKey = compressPublicKey(pubKey);
+    const path = derivationPath.split('/')
+    const depth = path.length
+    const lastChild = path[path.length - 1].split('\'');
+    const childnum = (lastChild.length === 1) ? parseInt(lastChild[0]) : (0x80000000 | parseInt(lastChild[0])) >>> 0;
+    var xpub = createXPUB(
+      depth,
+      fingerprint,
+      childnum,
+      chainCode,
+      publicKey,
+      Networks[network].bitcoinjs.bip32.public
+    );
+    return encodeBase58Check(xpub);
+  };
+  var parentPublicKey = compressPublicKey(parentPubKey)
+  var parentPublicKeyIntArray = parseHexString(parentPublicKey)
+  var hash = sha256(parentPublicKeyIntArray)
+  var result = ripemd160(hash)
+  var fingerprint =
+    ((result[0] << 24) | (result[1] << 16) | (result[2] << 8) | result[3]) >>>
+    0;
+  return finalize(fingerprint);
 }
 
 module.exports = deriveXpub
