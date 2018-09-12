@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = [{
   symbol: 'BTC',
   bip44: 0,
