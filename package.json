@@ -6,9 +6,10 @@
     "url": "git://github.com/hotwallet/xpubjs.git"
   },
   "description": "Construct extended public key",
-  "main": "src/index.js",
+  "main": "build/index.js",
   "scripts": {
-    "test": "node test"
+    "build": "babel src --out-dir build",
+    "test": "npm run build && node test"
   },
   "author": "will123195",
   "license": "MIT",
@@ -17,5 +18,8 @@
     "lodash.padstart": "^4.6.1",
     "ripemd160": "^2.0.2",
     "sha.js": "^2.4.11"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
   }
 }
