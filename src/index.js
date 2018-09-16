@@ -1,8 +1,10 @@
 const networks = require('./networks')
 const bs58 = require('bs58')
+const bip32 = require('bip32')
 const shajs = require('sha.js')
 const RIPEMD160 = require('ripemd160')
 const padStart = require('lodash.padstart')
+const bitcoinjs = require('bitcoinjs-lib')
 
 function sha256 (buffer) {
   return shajs('sha256').update(buffer).digest()
@@ -74,8 +76,13 @@ function createXPUB(
   return xpub
 }
 
-function deriveXpub({ symbol, derivationPath, pubKey, chainCode, parentPubKey } = {}) {
-  const network = networks.find(n => n.symbol === symbol)
+function getNetworkBySymbol(symbol) {
+  const networkId = Object.keys(networks).find(id => networks[id].unit === symbol)
+  return networks[networkId]
+}
+
+function deriveExtendedPublicKey({ symbol, derivationPath, pubKey, chainCode, parentPubKey } = {}) {
+  const network = getNetworkBySymbol(symbol).bitcoinjs
   if (!network) throw new Error(`Symbol '${symbol}' not supported`)
   const finalize = fingerprint => {
     const publicKey = compressPublicKey(pubKey)
@@ -89,7 +96,7 @@ function deriveXpub({ symbol, derivationPath, pubKey, chainCode, parentPubKey } 
       childnum,
       chainCode,
       publicKey,
-      network.xpub
+      network.bip32.public
     )
     return encodeBase58Check(xpub)
   }
@@ -101,4 +108,57 @@ function deriveXpub({ symbol, derivationPath, pubKey, chainCode, parentPubKey } 
   return finalize(fingerprint)
 }
 
-module.exports = deriveXpub
+const deriveAddress = ({ symbol, xpub, path }) => {
+  const network = getNetworkBySymbol(symbol).bitcoinjs
+  const pubkey = bip32.fromBase58(xpub, network).derivePath(path)
+  return bitcoinjs.payments.p2pkh({ pubkey: pubkey.publicKey, network }).address
+}
+
+// const toPrefixBuffer = network => {
+//   return {
+//     ...network,
+//     messagePrefix: Buffer.concat([
+//       Buffer.from([network.messagePrefix.length + 1]),
+//       Buffer.from(network.messagePrefix + "\n", "utf8")
+//     ]).toString('hex')
+//   }
+// }
+//
+// const deriveAddress = (path, segwit, symbol, xpub58) => {
+//   const bitcoin = bitcoinjs
+//   const network = networks.find(n => n.symbol === symbol)
+//   var script = segwit ? network.scriptHash : network.pubKeyHash
+//   var hdnode = bitcoin.HDNode.fromBase58(
+//     xpub58,
+//     toPrefixBuffer(Networks[coin].bitcoinjs)
+//   );
+//   var pubKeyToSegwitAddress = (pubKey, scriptVersion, segwit) => {
+//     var script = [0x00, 0x14].concat(
+//       Array.from(bitcoin.crypto.hash160(pubKey))
+//     );
+//     var hash160 = bitcoin.crypto.hash160(script);
+//     return bitcoin.address.toBase58Check(hash160, scriptVersion);
+//   };
+//
+//   var getPublicAddress = (hdnode, path, script, segwit) => {
+//     hdnode = hdnode.derivePath(
+//       path
+//         .split("/")
+//         .splice(3, 2)
+//         .join("/")
+//     );
+//     if (!segwit) {
+//       return hdnode.getAddress().toString();
+//     } else {
+//       return pubKeyToSegwitAddress(hdnode.getPublicKeyBuffer(), script, segwit);
+//     }
+//   };
+//   try {
+//     return getPublicAddress(hdnode, path, script, segwit);
+//   } catch (e) {
+//     throw e;
+//   }
+// }
+
+exports.deriveExtendedPublicKey = deriveExtendedPublicKey
+exports.deriveAddress = deriveAddress

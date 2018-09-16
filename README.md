@@ -9,7 +9,7 @@ npm i xpubjs
 ### Usage
 
 ```js
-const xpubjs = require('xpubjs')
+import { generateExtendedPublicKey, deriveAddress } from 'xpubjs'
 
 const symbol = 'BTC'
 const derivationPath = "44'/0'/0'"
@@ -17,10 +17,11 @@ const pubKey = '0430fc13a63d13b5c5549412bb4e29c3e2ec215b706d15b1c64cf211b0d889be
 const chainCode = '2858c1a102c2eb89c9f5ffe5424a886402d79e32d04d01c6e9eac575a3071019'
 const parentPubKey = '0485827e432f88eff022a5736fe7cf3a7e69c5765135b147449607af423d6b1d6ae0fe565f42619bd00f1cc56b3d48f9257d7f75bd7d944c65d3e5f0337d1c92b5'
 
-const xpub = xpubjs({ symbol, derivationPath, pubKey, chainCode, parentPubKey })
-
-console.log(xpub)
+const xpub = generateExtendedPublicKey({ symbol, derivationPath, pubKey, chainCode, parentPubKey })
 // xpub6DPkczA7jHG86ay34mywRpJ7Qhy5Cwrs8ZbNfn7rf5r6scqHVVPRaREHaUcdaQrUqQuiMrM5rNRJMbDYCW3yN2MrP98AFLN4zr4tNvYwhqA
+
+const address = deriveAddress({ symbol, xpub, path: '0/0' })
+// 142PVXZttFjSpeeERJ17JEBNfLGnzjo9VJ
 ```
 
 ### License
