@@ -1,6 +1,5 @@
 const networks = require('./networks')
 const bs58 = require('bs58')
-const bip32 = require('bip32')
 const shajs = require('sha.js')
 const RIPEMD160 = require('ripemd160')
 const padStart = require('lodash.padstart')
@@ -110,8 +109,11 @@ function deriveExtendedPublicKey({ symbol, derivationPath, pubKey, chainCode, pa
 
 const deriveAddress = ({ symbol, xpub, path }) => {
   const network = getNetworkBySymbol(symbol).bitcoinjs
-  const pubkey = bip32.fromBase58(xpub, network).derivePath(path)
-  return bitcoinjs.payments.p2pkh({ pubkey: pubkey.publicKey, network }).address
+  return bitcoinjs.HDNode
+    .fromBase58(xpub, network)
+    .neutered()
+    .derivePath(path)
+    .getAddress()
 }
 
 // const toPrefixBuffer = network => {

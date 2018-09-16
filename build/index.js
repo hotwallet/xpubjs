@@ -2,7 +2,6 @@
 
 var networks = require('./networks');
 var bs58 = require('bs58');
-var bip32 = require('bip32');
 var shajs = require('sha.js');
 var RIPEMD160 = require('ripemd160');
 var padStart = require('lodash.padstart');
@@ -106,8 +105,9 @@ var deriveAddress = function deriveAddress(_ref2) {
       path = _ref2.path;
 
   var network = getNetworkBySymbol(symbol).bitcoinjs;
-  var pubkey = bip32.fromBase58(xpub, network).derivePath(path);
-  return bitcoinjs.payments.p2pkh({ pubkey: pubkey.publicKey, network: network }).address;
+  // const pubkey = bip32.fromBase58(xpub, network).derivePath(path)
+  // return bitcoinjs.payments.p2pkh({ pubkey: pubkey.publicKey, network }).address
+  return bitcoinjs.HDNode.fromBase58(xpub, network).neutered().derivePath(path).getAddress();
 };
 
 // const toPrefixBuffer = network => {

@@ -14,8 +14,7 @@
   "author": "will123195",
   "license": "MIT",
   "dependencies": {
-    "bip32": "^1.0.2",
-    "bitcoinjs-lib": "^4.0.1",
+    "bitcoinjs-lib": "^3.3.2",
     "bs58": "^4.0.1",
     "lodash.padstart": "^4.6.1",
     "ripemd160": "^2.0.2",
