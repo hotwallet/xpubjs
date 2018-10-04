@@ -102,59 +102,19 @@ function deriveExtendedPublicKey() {
 var deriveAddress = function deriveAddress(_ref2) {
   var symbol = _ref2.symbol,
       xpub = _ref2.xpub,
-      path = _ref2.path;
+      path = _ref2.path,
+      isSegwit = _ref2.isSegwit;
 
   var network = getNetworkBySymbol(symbol).bitcoinjs;
-  // const pubkey = bip32.fromBase58(xpub, network).derivePath(path)
-  // return bitcoinjs.payments.p2pkh({ pubkey: pubkey.publicKey, network }).address
-  return bitcoinjs.HDNode.fromBase58(xpub, network).neutered().derivePath(path).getAddress();
+  var hdnode = bitcoinjs.HDNode.fromBase58(xpub, network);
+  if (!isSegwit) {
+    return hdnode.neutered().derivePath(path).getAddress();
+  }
+  var pubKey = hdnode.derivePath(path).getPublicKeyBuffer();
+  var script = [0x00, 0x14].concat(Array.from(bitcoinjs.crypto.hash160(pubKey)));
+  var hash160 = bitcoinjs.crypto.hash160(Buffer.from(script));
+  return bitcoinjs.address.toBase58Check(hash160, network.scriptHash);
 };
-
-// const toPrefixBuffer = network => {
-//   return {
-//     ...network,
-//     messagePrefix: Buffer.concat([
-//       Buffer.from([network.messagePrefix.length + 1]),
-//       Buffer.from(network.messagePrefix + "\n", "utf8")
-//     ]).toString('hex')
-//   }
-// }
-//
-// const deriveAddress = (path, segwit, symbol, xpub58) => {
-//   const bitcoin = bitcoinjs
-//   const network = networks.find(n => n.symbol === symbol)
-//   var script = segwit ? network.scriptHash : network.pubKeyHash
-//   var hdnode = bitcoin.HDNode.fromBase58(
-//     xpub58,
-//     toPrefixBuffer(Networks[coin].bitcoinjs)
-//   );
-//   var pubKeyToSegwitAddress = (pubKey, scriptVersion, segwit) => {
-//     var script = [0x00, 0x14].concat(
-//       Array.from(bitcoin.crypto.hash160(pubKey))
-//     );
-//     var hash160 = bitcoin.crypto.hash160(script);
-//     return bitcoin.address.toBase58Check(hash160, scriptVersion);
-//   };
-//
-//   var getPublicAddress = (hdnode, path, script, segwit) => {
-//     hdnode = hdnode.derivePath(
-//       path
-//         .split("/")
-//         .splice(3, 2)
-//         .join("/")
-//     );
-//     if (!segwit) {
-//       return hdnode.getAddress().toString();
-//     } else {
-//       return pubKeyToSegwitAddress(hdnode.getPublicKeyBuffer(), script, segwit);
-//     }
-//   };
-//   try {
-//     return getPublicAddress(hdnode, path, script, segwit);
-//   } catch (e) {
-//     throw e;
-//   }
-// }
 
 exports.deriveExtendedPublicKey = deriveExtendedPublicKey;
 exports.deriveAddress = deriveAddress;

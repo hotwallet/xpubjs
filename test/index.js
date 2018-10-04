@@ -15,6 +15,19 @@ const tests = [
     }
   },
   {
+    description: 'Bitcoin Segwit',
+    symbol: 'BTC',
+    derivationPath: "49'/0'/0'",
+    pubKey: '04279879f0035fa142f9a65bf4a4943539ea5ef5d11c617d81d7e47ae100fe472bdfa05a4ce2c84ccf08d331727c01da3dbc60728a36eb4a5031dc715f2d18a930',
+    chainCode: '9c26c75bb2101893e7f1772cd795e752239702c07b1f14cd931febc6aee19259',
+    parentPubKey: '0443b91a2946e64e9a6beebe983638823c873c8ed9caf566d274679911263b55385f8607c683df216952b5df197986d8fb0f4fd476c2dab14d8757add90144d1cc',
+    expectedXpub: 'xpub6BuPg4WfGBbDUadCCw4rDfvGLM6gRky5MiUrXrkucffVmiKuLtBy1qvbrQqFrJwb2DoUPbxGd3ftyonVE8xAHWZWKhKpxEoUiqcoeieLuun',
+    addresses: {
+      '0/0': '3Fp5otnVs9xcEmcogAy5r9jqdiYFmy6tri'
+    },
+    isSegwit: true
+  },
+  {
     description: 'Litecoin Legacy',
     symbol: 'LTC',
     derivationPath: "44'/2'/0'",
@@ -31,15 +44,15 @@ const tests = [
 console.log('----------')
 
 tests.forEach(test => {
-  const { symbol, derivationPath, pubKey, chainCode, parentPubKey } = test
+  const { symbol, derivationPath, pubKey, chainCode, parentPubKey, isSegwit } = test
   const xpub = deriveExtendedPublicKey({ symbol, derivationPath, pubKey, chainCode, parentPubKey })
   console.log(test.description)
   console.log('xpub:', xpub)
   assert.ok(test.expectedXpub === xpub, 'incorrect xpub')
   Object.keys(test.addresses).forEach(path => {
-    const address = deriveAddress({ symbol, xpub, path })
+    const address = deriveAddress({ symbol, xpub, path, isSegwit })
     console.log(path, address)
-    assert.ok(test.addresses[path] === address, 'incorrect address')
+    assert.ok(test.addresses[path] === address, `expecting address ${test.addresses[path]}`)
   })
   console.log('----------')
 })
