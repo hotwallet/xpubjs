@@ -20,7 +20,7 @@ const parentPubKey = '0485827e432f88eff022a5736fe7cf3a7e69c5765135b147449607af42
 const xpub = deriveExtendedPublicKey({ symbol, derivationPath, pubKey, chainCode, parentPubKey })
 // xpub6DPkczA7jHG86ay34mywRpJ7Qhy5Cwrs8ZbNfn7rf5r6scqHVVPRaREHaUcdaQrUqQuiMrM5rNRJMbDYCW3yN2MrP98AFLN4zr4tNvYwhqA
 
-const address = deriveAddress({ symbol, xpub, path: '0/0' })
+const address = deriveAddress({ symbol, xpub, path: '0/0', isSegwit: false })
 // 142PVXZttFjSpeeERJ17JEBNfLGnzjo9VJ
 ```
 
