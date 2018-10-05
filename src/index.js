@@ -4,6 +4,7 @@ const shajs = require('sha.js')
 const RIPEMD160 = require('ripemd160')
 const padStart = require('lodash.padstart')
 const bitcoinjs = require('bitcoinjs-lib')
+const zcashjs = require('bitcoinjs-lib-zcash')
 
 function sha256 (buffer) {
   return shajs('sha256').update(buffer).digest()
@@ -108,16 +109,18 @@ function deriveExtendedPublicKey({ symbol, derivationPath, pubKey, chainCode, pa
 }
 
 const deriveAddress = ({ symbol, xpub, path, isSegwit }) => {
+  const libjs = (symbol === 'ZEC') ? zcashjs : bitcoinjs
   const network = getNetworkBySymbol(symbol).bitcoinjs
-  const hdnode = bitcoinjs.HDNode.fromBase58(xpub, network)
+  const hdnode = libjs.HDNode.fromBase58(xpub, network)
   if (!isSegwit) {
     return hdnode.neutered().derivePath(path).getAddress()
   }
   const pubKey = hdnode.derivePath(path).getPublicKeyBuffer()
-  const script = [0x00, 0x14].concat(Array.from(bitcoinjs.crypto.hash160(pubKey)))
-  const hash160 = bitcoinjs.crypto.hash160(Buffer.from(script))
-  return bitcoinjs.address.toBase58Check(hash160, network.scriptHash)
+  const script = [0x00, 0x14].concat(Array.from(libjs.crypto.hash160(pubKey)))
+  const hash160 = libjs.crypto.hash160(Buffer.from(script))
+  return libjs.address.toBase58Check(hash160, network.scriptHash)
 }
 
 exports.deriveExtendedPublicKey = deriveExtendedPublicKey
 exports.deriveAddress = deriveAddress
+exports.networks = networks

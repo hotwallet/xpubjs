@@ -51,6 +51,18 @@ const tests = [
       '0/0': 'MLRCgKUNmx3MqWkqydLf32cUNvJDhDynBh' // 3ED4NS4QpqBw31UwskMKDPN54DhmdZnPG2
     },
     isSegwit: true
+  },
+  {
+    description: 'Zcash',
+    symbol: 'ZEC',
+    derivationPath: "44'/133'/0'",
+    pubKey: '046996de2681e59b358e10c668bcb8ce26104b7fa07423a626e3a7679d8ff500634a72e6d2426a2b4e2318ed5d6cdfaed48e05b627a2750abbf59a9afda39b58ac',
+    chainCode: '69a1d20f7ea51077c719660a2db8ef7d3088617ad75a239c5d4f56588fd8060f',
+    parentPubKey: '045ba306dba9c3c79caaa14000732be18438961ef92cebb1865f3031ff3f2df7c4d7ef64eeb93f8b8508794e4e8482255ba2dc4543c7625299b1da06e260d98487',
+    expectedXpub: 'xpub6BwVBJCU3LapvQRTsehENsGudMMNBuQxVNKveXhMvYoCnYpsuoxqVsbP872adL93JvU9xL8XgN4JJWtzfSjv1rdJVAfzWt2UZbRZGXxHkGJ',
+    addresses: {
+      '0/0': 't1Zmzbzv9ZUDTbvvHYgDg7jJHcZ9qSdamia'
+    }
   }
 ]
 
