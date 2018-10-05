@@ -51,7 +51,7 @@ module.exports = {
       },
       messagePrefix: "Litecoin Signed Message:",
       pubKeyHash: 48,
-      scriptHash: 5,
+      scriptHash: 50,
       wif: 0xb0
     },
     handleFeePerByte: false

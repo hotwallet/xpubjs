@@ -38,6 +38,19 @@ const tests = [
     addresses: {
       '0/0': 'LVP2DzdJYmXjf3c9Lkk5UezSNvbfZ1w1Vy'
     }
+  },
+  {
+    description: 'Litecoin Segwit',
+    symbol: 'LTC',
+    derivationPath: "49'/2'/0'",
+    pubKey: '04c2d9d2da3537f343c934fa489233e944d0b71cd6336642222584a4948081e5433f05be85ab215cd8bc6773a4330a6df51d3cb5e6c9951e9c202d862ae0c86f7c',
+    chainCode: '099c01f9553877ae0717b108ea25c5134195c89572719020730d6cd2111751eb',
+    parentPubKey: '04e33a74e28fa6cfa96136e91107439dcc39a9554dd2fd30df60e23d845ef6f5cfeec6d716fc37f90f41706ec1c2f5508a0b067c5cd5f17c83f35b29fc86e3d19e',
+    expectedXpub: 'Ltub2ZwbdGF9asJRd6cZPW8LpUeNn2oiGmjd3zrwJFKvmVvQnJ12X8daYQH5AMo4TF64YeCJ6ozZAJg4DhRzDA4y1etmB3u6cUZeLaNaHyjDPsF',
+    addresses: {
+      '0/0': 'MLRCgKUNmx3MqWkqydLf32cUNvJDhDynBh' // 3ED4NS4QpqBw31UwskMKDPN54DhmdZnPG2
+    },
+    isSegwit: true
   }
 ]
 
